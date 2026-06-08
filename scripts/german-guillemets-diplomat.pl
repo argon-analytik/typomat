@@ -8,6 +8,8 @@ binmode STDOUT, ":encoding(UTF-8)";
 
 my $OPEN_QUOTE = "»";
 my $CLOSE_QUOTE = "«";
+my $INNER_OPEN_QUOTE = "›";
+my $INNER_CLOSE_QUOTE = "‹";
 
 sub protect_value {
     my ($blocks_ref, $value) = @_;
@@ -119,14 +121,16 @@ sub next_non_space {
 }
 
 sub convert_quotes {
-    my ($text, $open, $close) = @_;
+    my ($text, $open, $close, $inner_open, $inner_close) = @_;
     my $converted = "";
-    my $open_quote = 1;
+    my $quote_depth = 0;
 
     for (my $i = 0; $i < length($text); $i++) {
         my $char = substr($text, $i, 1);
 
         if ($char eq '"') {
+            my $prev_char = $i > 0 ? substr($text, $i - 1, 1) : undef;
+            my $next_char = $i + 1 < length($text) ? substr($text, $i + 1, 1) : undef;
             my $prev = previous_non_space($text, $i);
             my $next = next_non_space($text, $i);
             my $is_open;
@@ -135,20 +139,31 @@ sub convert_quotes {
                 $is_open = 1;
             } elsif (!defined $next) {
                 $is_open = 0;
+            } elsif (defined $prev_char && $prev_char =~ /\s/ && $next !~ /[.,;:!?…)\]}]/) {
+                $is_open = 1;
+            } elsif (defined $next_char && $next_char =~ /\s/) {
+                $is_open = 0;
             } elsif ($prev =~ /[([{<:;,!?—–-]/) {
                 $is_open = 1;
             } elsif ($next =~ /[.,;:!?…)\]}]/) {
                 $is_open = 0;
             } else {
-                $is_open = $open_quote;
+                $is_open = $quote_depth == 0;
             }
 
             if ($is_open) {
-                $converted .= $open;
-                $open_quote = 0;
+                $converted .= $quote_depth == 0 ? $open : $inner_open;
+                $quote_depth++;
             } else {
-                $converted .= $close;
-                $open_quote = 1;
+                if ($quote_depth > 1) {
+                    $converted .= $inner_close;
+                    $quote_depth--;
+                } elsif ($quote_depth == 1) {
+                    $converted .= $close;
+                    $quote_depth--;
+                } else {
+                    $converted .= $close;
+                }
             }
         } else {
             $converted .= $char;
@@ -235,7 +250,7 @@ foreach my $line (@lines) {
     my $temp_line = protect_non_text_contexts($line, \@protected_blocks);
 
     $temp_line =~ s/[„“”‟«»‹›‚‘]/"/g;
-    $temp_line = convert_quotes($temp_line, $OPEN_QUOTE, $CLOSE_QUOTE);
+    $temp_line = convert_quotes($temp_line, $OPEN_QUOTE, $CLOSE_QUOTE, $INNER_OPEN_QUOTE, $INNER_CLOSE_QUOTE);
     $temp_line = normalize_ellipsis($temp_line);
     $temp_line = normalize_text_dashes($temp_line);
     $temp_line = normalize_german_numbers($temp_line);

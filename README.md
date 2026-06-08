@@ -58,6 +58,8 @@ wird zu:
 
 - Gerade, deutsche, englische oder gemischte Anführungszeichen werden in die
   Zielvariante umgewandelt.
+- Verschachtelte Anführungszeichen werden auf die zweite Ebene korrigiert:
+  `«Text «Zitat» Text»` wird in der Schweiz zu `«Text ‹Zitat› Text»`.
 - Geviertstriche, doppelte Bindestriche und spaced hyphens zwischen Wörtern
   werden zu Gedankenstrichen mit Leerzeichen: `Text—Text`, `Text--Text` und
   `Text - Text` werden zu `Text – Text`.

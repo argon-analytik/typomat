@@ -2,6 +2,8 @@
 
 „Grüße“, sagte die KI… Danach kam „ein zweites Zitat“ und ein Mischmasch wie „dieser Text“ oder „dieser Text“.
 
+Verschachtelte Zitate: „Text text ‚text text‘ text text.“ Und auch: „Text text ‚text text‘ text text.“
+
 Text – Text sollte ein Gedankenstrich werden. Text – Text auch. Text – Text ebenfalls. text-text bleibt ein Divis.
 
 Bitte keine Technik kaputtmachen: 192.168.1.1, 10.0.0.1, 8.8.8.8, 172.16.254.1/24 und 255.255.255.255 bleiben gleich.
