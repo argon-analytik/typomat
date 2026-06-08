@@ -26,13 +26,28 @@ oder einen externen Dienst gesendet.
 
 Warum das Projekt existiert: [Typografie ist die Rhetorik der Schrift](docs/essay-typografie-und-ki.md).
 
+## Direkt installieren
+
+Die fertigen macOS-Kurzbefehle können direkt über iCloud hinzugefügt werden:
+
+| Kurzbefehl | Link |
+| --- | --- |
+| Swiss Typomat | [Kurzbefehl hinzufügen](https://www.icloud.com/shortcuts/0cb78b98b8734bdda6595df4d7b7f326) |
+| German Typomat `„…“` | [Kurzbefehl hinzufügen](https://www.icloud.com/shortcuts/86c17cb2263c46ad805a5d9448f1d341) |
+| German Typomat `»…«` | [Kurzbefehl hinzufügen](https://www.icloud.com/shortcuts/0c8d49d9a3b44df9ad58645878e86d40) |
+
+Nach dem Hinzufügen müssen in macOS eventuell noch Script- und
+Datenschutzberechtigungen erlaubt werden. Die manuelle Einrichtung ist weiter
+unten und in [`docs/macos-kurzbefehl.md`](docs/macos-kurzbefehl.md)
+dokumentiert.
+
 ## Inhalt
 
+- [Direkt installieren](#direkt-installieren)
 - [Varianten](#varianten)
 - [Beispiele](#beispiele)
 - [Was Typomat korrigiert](#was-typomat-korrigiert)
 - [Was Typomat schützt](#was-typomat-schützt)
-- [Direkt installieren](#direkt-installieren)
 - [Schnellstart im Terminal](#schnellstart-im-terminal)
 - [macOS-Kurzbefehl als Schnellaktion](#macos-kurzbefehl-als-schnellaktion)
 - [Tests](#tests)
@@ -150,20 +165,6 @@ IPv4-Adressen werden nicht über feste Präfixe wie `192.` erkannt, sondern als
 gültige vierteilige Adresse mit Oktetten von `0` bis `255`. Dadurch bleiben
 auch `10.0.0.1`, `8.8.8.8` oder `172.16.254.1/24` geschützt.
 
-## Direkt installieren
-
-Die fertigen macOS-Kurzbefehle können direkt über iCloud hinzugefügt werden:
-
-| Kurzbefehl | Link |
-| --- | --- |
-| Swiss Typomat | [Kurzbefehl hinzufügen](https://www.icloud.com/shortcuts/0cb78b98b8734bdda6595df4d7b7f326) |
-| German Typomat `„…“` | [Kurzbefehl hinzufügen](https://www.icloud.com/shortcuts/86c17cb2263c46ad805a5d9448f1d341) |
-| German Typomat `»…«` | [Kurzbefehl hinzufügen](https://www.icloud.com/shortcuts/0c8d49d9a3b44df9ad58645878e86d40) |
-
-Nach dem Hinzufügen müssen in macOS eventuell noch Script- und
-Datenschutzberechtigungen erlaubt werden. Die manuelle Einrichtung ist unten
-und in [`docs/macos-kurzbefehl.md`](docs/macos-kurzbefehl.md) dokumentiert.
-
 ## Schnellstart im Terminal
 
 Voraussetzung: macOS bringt Perl bereits mit. Es muss nichts installiert werden.
@@ -208,15 +209,25 @@ Kurzfassung:
 10. In den Details **Im Share-Sheet anzeigen**, **Als Schnellaktion verwenden**,
     **Menü "Dienste"** und **Ausgabe bereitstellen** aktivieren.
 
-![Kompletter Aufbau des macOS-Kurzbefehls](docs/assets/macos-shortcut-full.png)
+<details>
+  <summary>Screenshots der macOS-Einrichtung anzeigen</summary>
 
-### Wichtige Einstellungen
+  <p>
+    <img src="docs/assets/macos-shortcut-full.png" alt="Kompletter Aufbau des macOS-Kurzbefehls" width="720">
+  </p>
 
-![Kurzbefehle-Einstellungen: Fortgeschritten](docs/assets/macos-shortcuts-advanced-settings.png)
+  <p>
+    <img src="docs/assets/macos-shortcuts-advanced-settings.png" alt="Kurzbefehle-Einstellungen: Fortgeschritten" width="420">
+  </p>
 
-![Kurzbefehldetails für Share-Sheet und Schnellaktion](docs/assets/macos-shortcut-details-settings.png)
+  <p>
+    <img src="docs/assets/macos-shortcut-details-settings.png" alt="Kurzbefehldetails für Share-Sheet und Schnellaktion" width="420">
+  </p>
 
-![Datenschutz-Einstellungen des Kurzbefehls](docs/assets/macos-shortcut-privacy-settings.png)
+  <p>
+    <img src="docs/assets/macos-shortcut-privacy-settings.png" alt="Datenschutz-Einstellungen des Kurzbefehls" width="420">
+  </p>
+</details>
 
 ### Verwendung im Alltag
 
