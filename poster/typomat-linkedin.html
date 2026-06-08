@@ -46,12 +46,10 @@
         height: 1200px;
         display: grid;
         grid-template-columns: 185px 1fr;
-        grid-template-rows: 255px 395px 310px 1fr;
+        grid-template-rows: 248px 372px 320px 1fr;
+        row-gap: 20px;
         padding: 70px 72px 56px;
-        background:
-          linear-gradient(90deg, rgba(5, 5, 5, 0.06) 1px, transparent 1px) 72px 0 /
-            96px 96px,
-          var(--paper);
+        background: var(--paper);
         overflow: hidden;
       }
 
@@ -90,8 +88,8 @@
         border-top: 6px solid var(--ink);
         padding-top: 20px;
         display: grid;
-        grid-template-columns: 1fr 260px;
-        column-gap: 42px;
+        grid-template-columns: 1fr 300px;
+        column-gap: 64px;
         align-items: start;
       }
 
@@ -105,8 +103,8 @@
 
       .hero-copy {
         color: var(--muted);
-        font-size: 30px;
-        line-height: 1.12;
+        font-size: 27px;
+        line-height: 1.14;
         font-weight: 570;
       }
 
@@ -121,24 +119,30 @@
       }
 
       .matrix {
+        position: relative;
         grid-column: 2;
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
         border-top: 3px solid var(--ink);
-        border-bottom: 2px solid var(--line);
+        overflow: hidden;
+      }
+
+      .matrix::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 50%;
+        width: 1px;
+        background: var(--line);
       }
 
       .variant {
         min-width: 0;
         padding: 26px 30px 28px;
-        border-right: 2px solid var(--line);
         display: grid;
         grid-template-rows: auto auto 1fr;
         gap: 22px;
-      }
-
-      .variant:last-child {
-        border-right: 0;
       }
 
       .variant h2 {
@@ -160,6 +164,7 @@
         display: grid;
         gap: 13px;
         align-self: end;
+        margin-bottom: 22px;
       }
 
       .rule {
@@ -190,7 +195,7 @@
         grid-template-columns: 280px 1fr;
         gap: 34px;
         border-top: 3px solid var(--ink);
-        padding-top: 26px;
+        padding-top: 30px;
       }
 
       .section-title {
@@ -238,13 +243,13 @@
       }
 
       .sample {
-        min-height: 42px;
+        min-height: 40px;
         display: flex;
         align-items: center;
-        padding: 8px 12px;
+        padding: 7px 12px;
         background: rgba(255, 255, 255, 0.48);
         border: 1px solid var(--line);
-        font-size: 23px;
+        font-size: 22px;
         line-height: 1;
         font-weight: 680;
         white-space: nowrap;
@@ -273,7 +278,7 @@
         grid-template-columns: 1fr 282px;
         gap: 36px;
         align-items: end;
-        border-top: 6px solid var(--ink);
+        border-top: 4px solid var(--ink);
         padding-top: 24px;
       }
 
