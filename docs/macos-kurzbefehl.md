@@ -3,13 +3,36 @@
 Diese Anleitung beschreibt, wie du einen Typomat-Diplomat in der Kurzbefehle-App
 als Schnellaktion einrichtest.
 
-## 1. Neuen Kurzbefehl erstellen
+Typomat funktioniert als Kurzbefehl nur unter macOS. Auf iPhone und iPad fehlt
+die hier verwendete macOS-Aktion **Shell-Skript ausführen** mit Perl.
+
+## 1. Script-Ausführung erlauben
+
+Öffne in der Kurzbefehle-App die Einstellungen, wechsle zu **Fortgeschritten**
+und aktiviere **Ausführen von Skripten erlauben**.
+
+![Kurzbefehle-Einstellungen: Fortgeschritten](assets/macos-shortcuts-advanced-settings.png)
+
+Optional ist **Teilen grosser Datenmengen erlauben** sinnvoll, wenn du lange
+Texte umwandelst.
+
+## 2. Neuen Kurzbefehl erstellen
 
 1. Öffne **Kurzbefehle**.
 2. Erstelle einen neuen Kurzbefehl.
 3. Benenne ihn zum Beispiel **Swiss-Diplomat** oder **German-Diplomat**.
 
-## 2. Eingabe konfigurieren
+## 3. Gesamten Kurzbefehl aufbauen
+
+![Kompletter Aufbau des macOS-Kurzbefehls](assets/macos-shortcut-full.png)
+
+Der Kurzbefehl besteht aus drei Aktionen:
+
+1. Eingabe empfangen.
+2. Shell-Skript ausführen.
+3. Stoppen und Shell-Skriptergebnis ausgeben.
+
+## 4. Eingabe konfigurieren
 
 Der Kurzbefehl soll markierten Text aus Apps übernehmen können.
 
@@ -18,7 +41,7 @@ Der Kurzbefehl soll markierten Text aus Apps übernehmen können.
 3. Aktiviere **Share-Sheet** und **Schnellaktionen**.
 4. Stelle **Wenn es keine Eingabe gibt** auf **Zwischenablage abrufen**.
 
-## 3. Shell-Skript-Aktion hinzufügen
+## 5. Shell-Skript-Aktion hinzufügen
 
 ![Kurzbefehle-App mit Shell-Script-Aktion](assets/macos-shortcut-shell-script.png)
 
@@ -29,22 +52,31 @@ Der Kurzbefehl soll markierten Text aus Apps übernehmen können.
 5. Lasse **Als Admin ausführen** ausgeschaltet.
 6. Kopiere den Inhalt des gewünschten Scripts aus `scripts/` in die Aktion.
 
-## 4. Ergebnis ausgeben
+## 6. Ergebnis ausgeben
 
 Füge am Ende die Aktion **Stoppen und ausgeben** hinzu.
 
 Als Ergebnis wählst du **Shell-Skriptergebnis**.
 
-## 5. Script-Ausführung erlauben
+## 7. Details einstellen
 
-Falls macOS das Script blockiert:
+Aktiviere rechts in den Kurzbefehldetails:
 
-1. Öffne die Einstellungen der Kurzbefehle-App.
-2. Wechsle zu **Fortgeschritten**.
-3. Aktiviere **Ausführen von Skripten erlauben**.
-4. Optional: Aktiviere **Teilen grosser Datenmengen erlauben**.
+- **Im Share-Sheet anzeigen**
+- **Als Schnellaktion verwenden**
+- **Menü "Dienste"**
+- **Ausgabe bereitstellen**
 
-## 6. Benutzung
+![Kurzbefehldetails für Share-Sheet und Schnellaktion](assets/macos-shortcut-details-settings.png)
+
+## 8. Datenschutz erlauben
+
+Wenn macOS nach Berechtigungen fragt, erlaube die Verwendung der Shell-Aktion
+und der Zwischenablage.
+
+![Datenschutz-Einstellungen des Kurzbefehls](assets/macos-shortcut-privacy-settings.png)
+
+## 9. Benutzung
 
 1. Markiere Text.
 2. Klicke mit der rechten Maustaste.

@@ -8,6 +8,12 @@ oder Webseiten kopiert werden und danach schnell korrigiert werden sollen:
 Anführungszeichen, Gedankenstriche, Schweizer `ss`, Zahlenformate und typische
 Mischformen.
 
+Typomat läuft lokal auf dem Mac. Die Kurzbefehle sind für **macOS** gedacht,
+nicht für iOS oder iPadOS, weil sie die macOS-Aktion **Shell-Skript ausführen**
+mit Perl verwenden.
+
+Warum das wichtig ist: [Typografie ist die Rhetorik der Schrift](docs/essay-typografie-und-ki.md).
+
 ## Varianten
 
 | Script | Region | Anführungszeichen | `ß` | Grosse Zahlen |
@@ -114,36 +120,66 @@ Automatisch gegen die erwarteten Ausgaben prüfen:
 ## macOS-Kurzbefehl als Schnellaktion
 
 So richtest du Typomat so ein, dass du Text markieren, mit der rechten Maustaste
-klicken und den passenden Diplomat im Kontextmenü ausführen kannst.
+klicken und den passenden Diplomat im Kontextmenü **Schnellaktionen** oder
+**Dienste** ausführen kannst.
 
-![Kurzbefehle-App mit Shell-Script-Aktion](docs/assets/macos-shortcut-shell-script.png)
+### 1. Scripts in Kurzbefehle erlauben
 
-1. Öffne die App **Kurzbefehle**.
+Öffne in der App **Kurzbefehle** die Einstellungen und wechsle zu
+**Fortgeschritten**. Aktiviere dort mindestens **Ausführen von Skripten
+erlauben**. Für lange Texte ist **Teilen grosser Datenmengen erlauben**
+ebenfalls sinnvoll.
+
+![Kurzbefehle-Einstellungen: Fortgeschritten](docs/assets/macos-shortcuts-advanced-settings.png)
+
+### 2. Neuen Kurzbefehl erstellen
+
+1. Öffne die App **Kurzbefehle** auf dem Mac.
 2. Erstelle einen neuen Kurzbefehl.
-3. Gib ihm einen klaren Namen, zum Beispiel **Swiss-Diplomat** oder
-   **German-Diplomat**.
-4. Aktiviere in den Kurzbefehldetails die Verwendung als **Schnellaktion**.
-5. Stelle ein, dass der Kurzbefehl Eingaben aus **Share-Sheet** und
-   **Schnellaktionen** erhält.
-6. Stelle bei **Wenn es keine Eingabe gibt** die Option
-   **Zwischenablage abrufen** ein.
-7. Füge die Aktion **Shell-Skript ausführen** hinzu.
-8. Wähle als Shell **perl**.
-9. Stelle **Eingabe** auf **Kurzbefehleingabe**.
-10. Stelle **Eingabe übergeben** auf **an stdin**.
-11. Lasse **Als Admin ausführen** ausgeschaltet.
-12. Kopiere den Inhalt des gewünschten Scripts aus dem Ordner `scripts/` in die
-    Shell-Skript-Aktion.
-13. Füge am Ende die Aktion **Stoppen und ausgeben** hinzu und gib dort das
-    **Shell-Skriptergebnis** aus.
+3. Benenne ihn zum Beispiel **Swiss-Diplomat** oder **German-Diplomat**.
+4. Öffne rechts die Kurzbefehldetails über das Info-Symbol.
 
-Wenn macOS das Ausführen von Scripts blockiert:
+### 3. Kurzbefehl aufbauen
 
-1. Öffne in der Kurzbefehle-App die Einstellungen.
-2. Wechsle zu **Fortgeschritten**.
-3. Aktiviere **Ausführen von Skripten erlauben**.
-4. Optional: Aktiviere **Teilen grosser Datenmengen erlauben**, wenn du sehr
-   lange Texte umwandelst.
+Der Kurzbefehl besteht aus drei Teilen:
+
+1. **Eingabe empfangen**
+   - Eingabe von **Share-Sheet** und **Schnellaktionen** erhalten.
+   - Wenn keine Eingabe vorhanden ist: **Zwischenablage abrufen**.
+2. **Shell-Skript ausführen**
+   - Shell: **perl**
+   - Eingabe: **Kurzbefehleingabe**
+   - Eingabe übergeben: **an stdin**
+   - Als Admin ausführen: **aus**
+   - Inhalt des gewünschten Scripts aus `scripts/` einfügen.
+3. **Stoppen und ausgeben**
+   - Ergebnis: **Shell-Skriptergebnis**
+   - Wenn keine Ausgabe möglich ist: **Keine Aktion**
+
+![Kompletter Aufbau des macOS-Kurzbefehls](docs/assets/macos-shortcut-full.png)
+
+### 4. Details einstellen
+
+Aktiviere in den Details rechts:
+
+- **Im Share-Sheet anzeigen**
+- **Als Schnellaktion verwenden**
+- **Menü "Dienste"**
+- **Ausgabe bereitstellen**
+
+So erscheint Typomat später per Rechtsklick in **Schnellaktionen** oder
+**Dienste**.
+
+![Kurzbefehldetails für Share-Sheet und Schnellaktion](docs/assets/macos-shortcut-details-settings.png)
+
+### 5. Datenschutz erlauben
+
+Wenn macOS beim ersten Ausführen fragt, ob der Kurzbefehl die Shell-Aktion oder
+die Zwischenablage verwenden darf, erlaube den Zugriff. In den
+Kurzbefehldetails sollte **Shell** erlaubt sein. Für die Zwischenablage ist
+**Immer erlauben** am bequemsten.
+
+![Datenschutz-Einstellungen des Kurzbefehls](docs/assets/macos-shortcut-privacy-settings.png)
 
 ## Verwendung
 
