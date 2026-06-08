@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="de-CH">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Typomat LinkedIn Poster</title>
+    <style>
+      :root {
+        --paper: #f7f6f1;
+        --ink: #050505;
+        --muted: #66635d;
+        --line: #cbc7bd;
+        --red: #e2362d;
+        --soft: #ebe8df;
+        font-family:
+          -apple-system,
+          BlinkMacSystemFont,
+          "SF Pro Display",
+          "SF Pro Text",
+          "Helvetica Neue",
+          Helvetica,
+          Arial,
+          sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 1200px;
+        height: 1200px;
+        margin: 0;
+        background: var(--paper);
+      }
+
+      body {
+        color: var(--ink);
+        font-kerning: normal;
+        text-rendering: geometricPrecision;
+      }
+
+      .poster {
+        width: 1200px;
+        height: 1200px;
+        display: grid;
+        grid-template-columns: 185px 1fr;
+        grid-template-rows: 255px 395px 310px 1fr;
+        padding: 70px 72px 56px;
+        background:
+          linear-gradient(90deg, rgba(5, 5, 5, 0.06) 1px, transparent 1px) 72px 0 /
+            96px 96px,
+          var(--paper);
+        overflow: hidden;
+      }
+
+      .rail {
+        grid-row: 1 / -1;
+        padding-top: 4px;
+        border-top: 6px solid var(--ink);
+      }
+
+      .rail .num {
+        display: block;
+        color: var(--red);
+        font-size: 32px;
+        font-weight: 800;
+        line-height: 1;
+      }
+
+      .rail .label {
+        display: block;
+        margin-top: 18px;
+        color: var(--muted);
+        font-size: 21px;
+        font-weight: 690;
+        line-height: 1.08;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+
+      .hero {
+        grid-column: 2;
+        border-top: 6px solid var(--ink);
+        padding-top: 20px;
+        display: grid;
+        grid-template-columns: 1fr 260px;
+        column-gap: 42px;
+        align-items: start;
+      }
+
+      h1 {
+        max-width: 690px;
+        font-size: 112px;
+        line-height: 0.92;
+        letter-spacing: 0;
+        font-weight: 840;
+      }
+
+      .hero-copy {
+        color: var(--muted);
+        font-size: 30px;
+        line-height: 1.12;
+        font-weight: 570;
+      }
+
+      .hero-copy strong {
+        display: block;
+        margin-bottom: 18px;
+        color: var(--red);
+        font-size: 22px;
+        line-height: 1;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .matrix {
+        grid-column: 2;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        border-top: 3px solid var(--ink);
+        border-bottom: 2px solid var(--line);
+      }
+
+      .variant {
+        min-width: 0;
+        padding: 26px 30px 28px;
+        border-right: 2px solid var(--line);
+        display: grid;
+        grid-template-rows: auto auto 1fr;
+        gap: 22px;
+      }
+
+      .variant:last-child {
+        border-right: 0;
+      }
+
+      .variant h2 {
+        color: var(--red);
+        font-size: 25px;
+        line-height: 1;
+        font-weight: 820;
+        text-transform: uppercase;
+      }
+
+      .quote {
+        font-size: 76px;
+        line-height: 0.92;
+        font-weight: 830;
+        letter-spacing: 0;
+      }
+
+      .rules {
+        display: grid;
+        gap: 13px;
+        align-self: end;
+      }
+
+      .rule {
+        display: grid;
+        grid-template-columns: 116px 1fr;
+        gap: 16px;
+        align-items: baseline;
+        padding-top: 10px;
+        border-top: 1px solid var(--line);
+      }
+
+      .rule span:first-child {
+        color: var(--muted);
+        font-size: 17px;
+        font-weight: 760;
+        text-transform: uppercase;
+      }
+
+      .rule span:last-child {
+        font-size: 25px;
+        line-height: 1.05;
+        font-weight: 710;
+      }
+
+      .transform {
+        grid-column: 2;
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        gap: 34px;
+        border-top: 3px solid var(--ink);
+        padding-top: 26px;
+      }
+
+      .section-title {
+        display: grid;
+        align-content: start;
+        gap: 12px;
+      }
+
+      .section-title span {
+        color: var(--red);
+        font-size: 22px;
+        line-height: 1;
+        font-weight: 820;
+      }
+
+      .section-title h2 {
+        font-size: 42px;
+        line-height: 0.98;
+        font-weight: 820;
+      }
+
+      .before-after {
+        display: grid;
+        grid-template-columns: 1fr 44px 1fr;
+        gap: 18px;
+        align-items: stretch;
+      }
+
+      .examples {
+        display: grid;
+        gap: 12px;
+      }
+
+      .examples h3 {
+        color: var(--muted);
+        font-size: 18px;
+        line-height: 1;
+        font-weight: 780;
+        text-transform: uppercase;
+      }
+
+      .stack {
+        display: grid;
+        gap: 7px;
+      }
+
+      .sample {
+        min-height: 42px;
+        display: flex;
+        align-items: center;
+        padding: 8px 12px;
+        background: rgba(255, 255, 255, 0.48);
+        border: 1px solid var(--line);
+        font-size: 23px;
+        line-height: 1;
+        font-weight: 680;
+        white-space: nowrap;
+      }
+
+      .sample.bad {
+        color: var(--muted);
+      }
+
+      .sample.good {
+        color: var(--ink);
+      }
+
+      .arrow {
+        align-self: center;
+        color: var(--red);
+        font-size: 42px;
+        line-height: 1;
+        font-weight: 760;
+        text-align: center;
+      }
+
+      .footer {
+        grid-column: 2;
+        display: grid;
+        grid-template-columns: 1fr 282px;
+        gap: 36px;
+        align-items: end;
+        border-top: 6px solid var(--ink);
+        padding-top: 24px;
+      }
+
+      .claim {
+        max-width: 690px;
+        font-size: 31px;
+        line-height: 1.04;
+        font-weight: 790;
+      }
+
+      .meta {
+        display: grid;
+        gap: 10px;
+        color: var(--muted);
+        font-size: 18px;
+        line-height: 1.16;
+        font-weight: 650;
+      }
+
+      .meta strong {
+        color: var(--red);
+        font-size: 19px;
+        line-height: 1;
+        font-weight: 820;
+        text-transform: uppercase;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="poster" aria-label="Typomat Poster">
+      <aside class="rail">
+        <span class="num">01</span>
+        <span class="label">Swiss<br />Typographic<br />Style</span>
+      </aside>
+
+      <section class="hero">
+        <h1>Typomat</h1>
+        <p class="hero-copy">
+          <strong>LLM‑Text bereinigen</strong>
+          Aus KI‑Text wird veröffentlichungsreife Typografie.
+        </p>
+      </section>
+
+      <section class="matrix" aria-label="Typomat Varianten">
+        <article class="variant">
+          <h2>Swiss Typomat</h2>
+          <div class="quote">«Text»</div>
+          <div class="rules">
+            <div class="rule"><span>Zeichen</span><span>ss · 100'000 · 29.–</span></div>
+            <div class="rule"><span>Innen</span><span>‹Zitat›</span></div>
+            <div class="rule"><span>Format</span><span>CHF 29.95</span></div>
+          </div>
+        </article>
+
+        <article class="variant">
+          <h2>German Typomat</h2>
+          <div class="quote">„Text“<br />»Text«</div>
+          <div class="rules">
+            <div class="rule"><span>Zeichen</span><span>ß · 100.000 · 29,–</span></div>
+            <div class="rule"><span>Innen</span><span>‚Zitat‘ / ›Zitat‹</span></div>
+            <div class="rule"><span>Format</span><span>29,95 €</span></div>
+          </div>
+        </article>
+      </section>
+
+      <section class="transform" aria-label="Transformationen">
+        <div class="section-title">
+          <span>02</span>
+          <h2>Was korrigiert wird</h2>
+        </div>
+
+        <div class="before-after">
+          <div class="examples">
+            <h3>Vorher</h3>
+            <div class="stack">
+              <div class="sample bad">"Text"</div>
+              <div class="sample bad">Text—Text</div>
+              <div class="sample bad">1-2</div>
+              <div class="sample bad">CHF 29,95</div>
+              <div class="sample bad">| Text—Text |</div>
+            </div>
+          </div>
+
+          <div class="arrow" aria-hidden="true">→</div>
+
+          <div class="examples">
+            <h3>Nachher</h3>
+            <div class="stack">
+              <div class="sample good">«Text» / „Text“</div>
+              <div class="sample good">Text – Text</div>
+              <div class="sample good">1–2</div>
+              <div class="sample good">CHF 29.95</div>
+              <div class="sample good">| Text – Text |</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <p class="claim">Lokal auf macOS. Keine API. Typografie bleibt menschliche Sorgfalt.</p>
+        <div class="meta">
+          <strong>Installieren</strong>
+          <span>iCloud Shortcuts<br />GitHub: argon‑analytik/typomat</span>
+        </div>
+      </footer>
+    </main>
+  </body>
+</html>

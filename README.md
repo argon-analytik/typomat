@@ -36,6 +36,7 @@ Warum das Projekt existiert: [Typografie ist die Rhetorik der Schrift](docs/essa
 - [Schnellstart im Terminal](#schnellstart-im-terminal)
 - [macOS-Kurzbefehl als Schnellaktion](#macos-kurzbefehl-als-schnellaktion)
 - [Tests](#tests)
+- [Social Assets](#social-assets)
 - [Projektstruktur](#projektstruktur)
 - [Grenzen](#grenzen)
 - [iCloud-Shortcuts](#icloud-shortcuts)
@@ -259,6 +260,17 @@ Erwartete Ausgabe:
 All Typomat tests passed.
 ```
 
+## Social Assets
+
+Für LinkedIn und andere Social-Posts gibt es ein reproduzierbares Poster und
+einen vorbereiteten Beitragstext:
+
+| Datei | Zweck |
+| --- | --- |
+| [`poster/typomat-linkedin.html`](poster/typomat-linkedin.html) | HTML/CSS-Poster im Swiss Typographic Style |
+| [`poster/typomat-linkedin.png`](poster/typomat-linkedin.png) | gerendertes Beitragsbild, `1200 × 1200` |
+| [`docs/social/linkedin-post-typomat.md`](docs/social/linkedin-post-typomat.md) | LinkedIn-Beitragstext mit GitHub- und iCloud-Links |
+
 ## Projektstruktur
 
 ```text
@@ -267,12 +279,16 @@ All Typomat tests passed.
 ├── docs/
 │   ├── essay-typografie-und-ki.md
 │   ├── macos-kurzbefehl.md
+│   ├── social/
 │   └── assets/
 ├── examples/
 │   ├── test-text.md
 │   ├── expected-swiss.md
 │   ├── expected-german.md
 │   └── expected-german-guillemets.md
+├── poster/
+│   ├── typomat-linkedin.html
+│   └── typomat-linkedin.png
 └── scripts/
     ├── swiss-diplomat.pl
     ├── german-diplomat.pl
