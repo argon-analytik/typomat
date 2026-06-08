@@ -1,223 +1,284 @@
 # Typomat
 
-Typomat ist eine kleine Sammlung von macOS-Kurzbefehlen und Perl-Scripts, die
-LLM-Text in typografisch sauberes Deutsch umwandeln.
+<p align="center">
+  <strong>Swiss and German typography cleanup for AI-generated text.</strong><br>
+  Local macOS Shortcuts and Perl scripts for quotes, dashes, numbers, prices and common LLM typography drift.
+</p>
 
-Der Fokus liegt auf Texten, die aus ChatGPT, Claude, Gemini, Notion, Google Docs
-oder Webseiten kopiert werden und danach schnell korrigiert werden sollen:
-Anführungszeichen, Gedankenstriche, Schweizer `ss`, Zahlenformate und typische
-Mischformen.
+<p align="center">
+  <img alt="Platform: macOS" src="https://img.shields.io/badge/platform-macOS-black">
+  <img alt="Runtime: Perl" src="https://img.shields.io/badge/runtime-Perl-39457E">
+  <img alt="Privacy: local only" src="https://img.shields.io/badge/privacy-local%20only-0A7F42">
+  <img alt="No API required" src="https://img.shields.io/badge/API-not%20required-555">
+</p>
 
-Typomat läuft lokal auf dem Mac. Die Kurzbefehle sind für **macOS** gedacht,
-nicht für iOS oder iPadOS, weil sie die macOS-Aktion **Shell-Skript ausführen**
-mit Perl verwenden.
+Typomat bereinigt Texte, die aus ChatGPT, Claude, Gemini, Notion, Google Docs,
+Webseiten oder anderen Quellen kopiert wurden. Der Fokus liegt auf typischen
+Mischformen: falsche Anführungszeichen, falsche Gedankenstriche, deutsche und
+Schweizer Zahlenformate, Preise, Divis/Bis-Striche und Satzzeichenabstände.
 
-Warum das wichtig ist: [Typografie ist die Rhetorik der Schrift](docs/essay-typografie-und-ki.md).
+Typomat läuft lokal auf dem Mac. Es wird kein Text an eine API, einen Server
+oder einen externen Dienst gesendet.
+
+> Typomat als macOS-Kurzbefehl funktioniert nur unter **macOS**, nicht unter iOS
+> oder iPadOS. Die Kurzbefehle verwenden die macOS-Aktion
+> **Shell-Skript ausführen** mit Perl.
+
+Warum das Projekt existiert: [Typografie ist die Rhetorik der Schrift](docs/essay-typografie-und-ki.md).
+
+## Inhalt
+
+- [Varianten](#varianten)
+- [Beispiele](#beispiele)
+- [Was Typomat korrigiert](#was-typomat-korrigiert)
+- [Was Typomat schützt](#was-typomat-schützt)
+- [Schnellstart im Terminal](#schnellstart-im-terminal)
+- [macOS-Kurzbefehl als Schnellaktion](#macos-kurzbefehl-als-schnellaktion)
+- [Tests](#tests)
+- [Projektstruktur](#projektstruktur)
+- [Grenzen](#grenzen)
+- [iCloud-Shortcuts](#icloud-shortcuts)
 
 ## Varianten
 
-| Script | Region | Anführungszeichen | `ß` | Grosse Zahlen |
-| --- | --- | --- | --- | --- |
-| `scripts/swiss-diplomat.pl` | Schweiz | `«Text»` | `ss` | `100'000` |
-| `scripts/german-diplomat.pl` | Deutschland | `„Text“` | bleibt `ß` | `100.000` |
-| `scripts/german-guillemets-diplomat.pl` | Deutschland, alternativ | `»Text«` | bleibt `ß` | `100.000` |
+| Script | Sprache/Region | Anführungszeichen | `ß` | Grosse Zahlen | Runde Preise |
+| --- | --- | --- | --- | --- | --- |
+| [`scripts/swiss-diplomat.pl`](scripts/swiss-diplomat.pl) | Schweiz | `«Text»`, innen `‹Text›` | `ss` | `100'000` | `29.–` |
+| [`scripts/german-diplomat.pl`](scripts/german-diplomat.pl) | Deutschland | `„Text“`, innen `‚Text‘` | bleibt `ß` | `100.000` | `29,–` |
+| [`scripts/german-guillemets-diplomat.pl`](scripts/german-guillemets-diplomat.pl) | Deutschland, alternativ | `»Text«`, innen `›Text‹` | bleibt `ß` | `100.000` | `29,–` |
 
 ## Beispiele
 
 ### Swiss-Diplomat
 
 ```text
-"Grüße" aus dem KI-Text—aber bitte sauber: 100.000 Zeichen.
+"Grüße" aus dem KI-Text—aber bitte sauber: 100.000 Zeichen. CHF 29,95.
 ```
 
 wird zu:
 
 ```text
-«Grüsse» aus dem KI-Text – aber bitte sauber: 100'000 Zeichen.
+«Grüsse» aus dem KI-Text – aber bitte sauber: 100'000 Zeichen. CHF 29.95.
 ```
 
 ### German-Diplomat
 
 ```text
-"Grüße" aus dem KI-Text—aber bitte sauber: 100'000 Zeichen.
+"Grüße" aus dem KI-Text—aber bitte sauber: 100'000 Zeichen. 29.95 €.
 ```
 
 wird zu:
 
 ```text
-„Grüße“ aus dem KI-Text – aber bitte sauber: 100.000 Zeichen.
+„Grüße“ aus dem KI-Text – aber bitte sauber: 100.000 Zeichen. 29,95 €.
 ```
 
-### German-Diplomat mit Guillemets
+### Verschachtelte Anführungszeichen
 
 ```text
-"Grüße" aus dem KI-Text—aber bitte sauber: 100'000 Zeichen.
+«Text text «text text» text text.»
 ```
 
-wird zu:
+wird in der Schweizer Variante zu:
 
 ```text
-»Grüße« aus dem KI-Text – aber bitte sauber: 100.000 Zeichen.
+«Text text ‹text text› text text.»
 ```
 
-## Was wird umgewandelt?
+### Tabellenzellen
 
-- Gerade, deutsche, englische oder gemischte Anführungszeichen werden in die
-  Zielvariante umgewandelt.
-- Verschachtelte Anführungszeichen werden auf die zweite Ebene korrigiert:
-  `«Text «Zitat» Text»` wird in der Schweiz zu `«Text ‹Zitat› Text»`.
-- Geviertstriche, doppelte Bindestriche und spaced hyphens zwischen Wörtern
-  werden zu Gedankenstrichen mit Leerzeichen: `Text—Text`, `Text--Text` und
-  `Text - Text` werden zu `Text – Text`.
-- Echte Divis-Verbindungen ohne Leerzeichen bleiben erhalten:
-  `text-text` bleibt `text-text`.
-- Tabellenzellen werden mitkorrigiert: `| Text—Text |` wird zu
-  `| Text – Text |`.
-- Zahlenbereiche werden als Bis-Strich gesetzt: `1-2` und `10 - 12` werden zu
-  `1–2` und `10–12`.
-- Preis-Abkürzungen werden lokalisiert: Schweiz `29.--` zu `29.–`, Deutschland
-  `29.--` zu `29,–`.
-- Dezimalzeichen bei Preisen werden nur in klaren Währungskontexten korrigiert:
-  Schweiz `CHF 29,95` zu `CHF 29.95`, Deutschland `29.95 €` zu `29,95 €`.
-- Drei Punkte werden zu einem Auslassungszeichen: `...` wird zu `…`.
-- Überflüssige Leerzeichen vor `,;:!?` werden entfernt.
-- Codeblöcke mit dreifachen Backticks und Inline-Code in Backticks bleiben
-  unverändert.
-- Satzzeichen werden nicht aus Anführungszeichen herausgeschoben:
-  `"So bleibt es."` wird in der Schweiz zu `«So bleibt es.»`.
-- URLs, E-Mail-Adressen, IPv4-/IPv6-Adressen, Versionsnummern, Datumswerte,
-  Markdown-Links und Dateipfade werden vor der Umwandlung geschützt.
-- IPv4-Adressen werden nicht über feste Präfixe wie `192.` erkannt, sondern als
-  gültige vierteilige Adresse mit Oktetten von `0` bis `255`.
+```markdown
+| Spalte | Wert |
+| --- | --- |
+| Text—Text | 100.000 |
+| 1-2 | 29.-- |
+```
+
+wird im Swiss-Diplomat zu:
+
+```markdown
+| Spalte | Wert |
+| --- | --- |
+| Text – Text | 100'000 |
+| 1–2 | 29.– |
+```
+
+## Was Typomat korrigiert
+
+| Problem | Swiss-Diplomat | German-Diplomat |
+| --- | --- | --- |
+| Gerade Anführungszeichen | `"Text"` -> `«Text»` | `"Text"` -> `„Text“` |
+| Gemischte Anführungszeichen | `„Text“`, `“Text”`, `«Text»` -> `«Text»` | `„Text“`, `“Text”`, `«Text»` -> `„Text“` |
+| Verschachtelte Zitate | `«Text «Zitat» Text»` -> `«Text ‹Zitat› Text»` | `„Text „Zitat“ Text“` -> `„Text ‚Zitat‘ Text“` |
+| Deutsches Eszett | `Grüße` -> `Grüsse` | bleibt `Grüße` |
+| Geviertstrich zwischen Wörtern | `Text—Text` -> `Text – Text` | `Text—Text` -> `Text – Text` |
+| Doppelte Bindestriche | `Text--Text` -> `Text – Text` | `Text--Text` -> `Text – Text` |
+| Spaced hyphen | `Text - Text` -> `Text – Text` | `Text - Text` -> `Text – Text` |
+| Divis ohne Leerzeichen | `text-text` bleibt `text-text` | `text-text` bleibt `text-text` |
+| Zahlenbereich | `1-2` -> `1–2` | `1-2` -> `1–2` |
+| Auslassungspunkte | `...` -> `…` | `...` -> `…` |
+| Satzzeichenabstände | `Text , oder ?` -> `Text, oder?` | `Text , oder ?` -> `Text, oder?` |
+| Grosse Zahlen | `100.000` -> `100'000` | `100'000` -> `100.000` |
+| Runde Preise | `29.--`, `29.-` -> `29.–` | `29.--`, `29.-` -> `29,–` |
+| Preis-Dezimalzeichen | `CHF 29,95` -> `CHF 29.95` | `29.95 €` -> `29,95 €` |
+
+Dezimalzeichen werden bewusst nur in klaren Währungskontexten korrigiert. So
+bleiben technische Werte, Code, Versionen und englischsprachige Zahlen möglichst
+unangetastet.
+
+## Was Typomat schützt
+
+Typomat ist konservativ. Zweifelhafte Fälle bleiben lieber unverändert, als dass
+Code oder technische Angaben beschädigt werden.
+
+Geschützt werden unter anderem:
+
+- Codeblöcke mit dreifachen Backticks
+- Inline-Code in Backticks
+- eingerückter Markdown-Code
+- URLs
+- E-Mail-Adressen
+- Markdown-Links
+- IPv4- und IPv6-Adressen
+- Versionsnummern wie `v1.2.3` oder `macOS 15.4.1`
+- Datumswerte wie `08.06.2026` und `2026-06-08`
+- Dateipfade wie `/Users/demo/project-1.2.3/file.txt`
+
+IPv4-Adressen werden nicht über feste Präfixe wie `192.` erkannt, sondern als
+gültige vierteilige Adresse mit Oktetten von `0` bis `255`. Dadurch bleiben
+auch `10.0.0.1`, `8.8.8.8` oder `172.16.254.1/24` geschützt.
 
 ## Schnellstart im Terminal
 
 Voraussetzung: macOS bringt Perl bereits mit. Es muss nichts installiert werden.
 
+Swiss-Diplomat:
+
 ```bash
 pbpaste | perl scripts/swiss-diplomat.pl | pbcopy
 ```
 
-Danach liegt der bereinigte Text wieder in der Zwischenablage.
-
-Für Deutschland:
+German-Diplomat:
 
 ```bash
 pbpaste | perl scripts/german-diplomat.pl | pbcopy
 ```
 
-## Testen
+German-Diplomat mit Guillemets:
 
-Im Ordner `examples/` liegt ein Testtext mit typischen Problemstellen:
-Anführungszeichen-Mischmasch, Gedankenstriche, Divis, IP-Adressen, Versionen,
-Datumswerte, URLs, Markdown, Code und Zahlen.
+```bash
+pbpaste | perl scripts/german-guillemets-diplomat.pl | pbcopy
+```
+
+Danach liegt der bereinigte Text wieder in der Zwischenablage.
+
+## macOS-Kurzbefehl als Schnellaktion
+
+Die ausführliche Anleitung mit Screenshots liegt hier:
+[`docs/macos-kurzbefehl.md`](docs/macos-kurzbefehl.md).
+
+Kurzfassung:
+
+1. In der Kurzbefehle-App unter **Fortgeschritten** die Option
+   **Ausführen von Skripten erlauben** aktivieren.
+2. Neuen Kurzbefehl erstellen, zum Beispiel **Swiss-Diplomat**.
+3. Eingabe aus **Share-Sheet** und **Schnellaktionen** empfangen.
+4. Wenn keine Eingabe vorhanden ist: **Zwischenablage abrufen**.
+5. Aktion **Shell-Skript ausführen** hinzufügen.
+6. Shell auf **perl** stellen.
+7. Eingabe auf **Kurzbefehleingabe** und **an stdin** stellen.
+8. Script aus [`scripts/`](scripts/) einfügen.
+9. Ergebnis mit **Stoppen und ausgeben** als **Shell-Skriptergebnis** ausgeben.
+10. In den Details **Im Share-Sheet anzeigen**, **Als Schnellaktion verwenden**,
+    **Menü "Dienste"** und **Ausgabe bereitstellen** aktivieren.
+
+![Kompletter Aufbau des macOS-Kurzbefehls](docs/assets/macos-shortcut-full.png)
+
+### Wichtige Einstellungen
+
+![Kurzbefehle-Einstellungen: Fortgeschritten](docs/assets/macos-shortcuts-advanced-settings.png)
+
+![Kurzbefehldetails für Share-Sheet und Schnellaktion](docs/assets/macos-shortcut-details-settings.png)
+
+![Datenschutz-Einstellungen des Kurzbefehls](docs/assets/macos-shortcut-privacy-settings.png)
+
+### Verwendung im Alltag
+
+1. Text in einer App markieren.
+2. Rechtsklick.
+3. **Schnellaktionen** oder **Dienste** öffnen.
+4. **Swiss-Diplomat**, **German-Diplomat** oder die Guillemets-Variante wählen.
+
+In manchen Apps ersetzt macOS den markierten Text direkt. In anderen Apps wird
+das Ergebnis angezeigt oder in die Zwischenablage gelegt. Wenn eine App das
+Ersetzen nicht unterstützt, kopiere den Text zuerst, führe den Kurzbefehl aus
+und füge das Ergebnis danach wieder ein.
+
+## Tests
+
+Der Ordner [`examples/`](examples/) enthält einen absichtlich gemischten
+Testtext und die erwarteten Ausgaben für alle drei Varianten.
+
+| Datei | Zweck |
+| --- | --- |
+| [`examples/test-text.md`](examples/test-text.md) | Input mit Zitaten, Tabellen, Preisen, IPs, Code, URLs und Zahlen |
+| [`examples/expected-swiss.md`](examples/expected-swiss.md) | erwartete Ausgabe für Swiss-Diplomat |
+| [`examples/expected-german.md`](examples/expected-german.md) | erwartete Ausgabe für German-Diplomat |
+| [`examples/expected-german-guillemets.md`](examples/expected-german-guillemets.md) | erwartete Ausgabe für German-Diplomat mit Guillemets |
+
+Einzelne Variante testen:
 
 ```bash
 perl scripts/swiss-diplomat.pl < examples/test-text.md
-perl scripts/german-diplomat.pl < examples/test-text.md
 ```
 
-Automatisch gegen die erwarteten Ausgaben prüfen:
+Alle Varianten gegen die erwarteten Ausgaben prüfen:
 
 ```bash
 ./scripts/test.sh
 ```
 
-## macOS-Kurzbefehl als Schnellaktion
+Erwartete Ausgabe:
 
-So richtest du Typomat so ein, dass du Text markieren, mit der rechten Maustaste
-klicken und den passenden Diplomat im Kontextmenü **Schnellaktionen** oder
-**Dienste** ausführen kannst.
+```text
+All Typomat tests passed.
+```
 
-### 1. Scripts in Kurzbefehle erlauben
+## Projektstruktur
 
-Öffne in der App **Kurzbefehle** die Einstellungen und wechsle zu
-**Fortgeschritten**. Aktiviere dort mindestens **Ausführen von Skripten
-erlauben**. Für lange Texte ist **Teilen grosser Datenmengen erlauben**
-ebenfalls sinnvoll.
-
-![Kurzbefehle-Einstellungen: Fortgeschritten](docs/assets/macos-shortcuts-advanced-settings.png)
-
-### 2. Neuen Kurzbefehl erstellen
-
-1. Öffne die App **Kurzbefehle** auf dem Mac.
-2. Erstelle einen neuen Kurzbefehl.
-3. Benenne ihn zum Beispiel **Swiss-Diplomat** oder **German-Diplomat**.
-4. Öffne rechts die Kurzbefehldetails über das Info-Symbol.
-
-### 3. Kurzbefehl aufbauen
-
-Der Kurzbefehl besteht aus drei Teilen:
-
-1. **Eingabe empfangen**
-   - Eingabe von **Share-Sheet** und **Schnellaktionen** erhalten.
-   - Wenn keine Eingabe vorhanden ist: **Zwischenablage abrufen**.
-2. **Shell-Skript ausführen**
-   - Shell: **perl**
-   - Eingabe: **Kurzbefehleingabe**
-   - Eingabe übergeben: **an stdin**
-   - Als Admin ausführen: **aus**
-   - Inhalt des gewünschten Scripts aus `scripts/` einfügen.
-3. **Stoppen und ausgeben**
-   - Ergebnis: **Shell-Skriptergebnis**
-   - Wenn keine Ausgabe möglich ist: **Keine Aktion**
-
-![Kompletter Aufbau des macOS-Kurzbefehls](docs/assets/macos-shortcut-full.png)
-
-### 4. Details einstellen
-
-Aktiviere in den Details rechts:
-
-- **Im Share-Sheet anzeigen**
-- **Als Schnellaktion verwenden**
-- **Menü "Dienste"**
-- **Ausgabe bereitstellen**
-
-So erscheint Typomat später per Rechtsklick in **Schnellaktionen** oder
-**Dienste**.
-
-![Kurzbefehldetails für Share-Sheet und Schnellaktion](docs/assets/macos-shortcut-details-settings.png)
-
-### 5. Datenschutz erlauben
-
-Wenn macOS beim ersten Ausführen fragt, ob der Kurzbefehl die Shell-Aktion oder
-die Zwischenablage verwenden darf, erlaube den Zugriff. In den
-Kurzbefehldetails sollte **Shell** erlaubt sein. Für die Zwischenablage ist
-**Immer erlauben** am bequemsten.
-
-![Datenschutz-Einstellungen des Kurzbefehls](docs/assets/macos-shortcut-privacy-settings.png)
-
-## Verwendung
-
-1. Markiere Text in einer App.
-2. Klicke mit der rechten Maustaste.
-3. Wähle **Schnellaktionen** oder **Dienste**.
-4. Wähle **Swiss-Diplomat**, **German-Diplomat** oder die Guillemets-Variante.
-
-In manchen Apps ersetzt macOS den markierten Text direkt. In anderen Apps wird
-das Ergebnis angezeigt oder in die Zwischenablage gelegt. Wenn eine App das
-Ersetzen nicht unterstützt, kopiere den Text zuerst, führe den Kurzbefehl aus
-und füge das Ergebnis danach ein.
-
-## Datenschutz
-
-Typomat läuft lokal auf deinem Mac. Der Text wird nicht an eine API, einen
-Server oder einen externen Dienst gesendet.
+```text
+.
+├── README.md
+├── docs/
+│   ├── essay-typografie-und-ki.md
+│   ├── macos-kurzbefehl.md
+│   └── assets/
+├── examples/
+│   ├── test-text.md
+│   ├── expected-swiss.md
+│   ├── expected-german.md
+│   └── expected-german-guillemets.md
+└── scripts/
+    ├── swiss-diplomat.pl
+    ├── german-diplomat.pl
+    ├── german-guillemets-diplomat.pl
+    └── test.sh
+```
 
 ## Grenzen
 
-Typomat ist bewusst ein pragmatischer Textfilter und kein vollständiger
-Grammatik-Parser.
+Typomat ist ein pragmatischer Textfilter, kein vollständiger Grammatik-Parser.
 
-- Mehrzeilige oder verschachtelte Anführungszeichen können eine manuelle
-  Kontrolle brauchen.
-- Geviertstriche in Markdown-Tabellen werden geschützt; dadurch werden darin
-  absichtlich keine Gedankenstriche korrigiert.
+- Mehrzeilige oder sehr komplex verschachtelte Anführungszeichen können eine
+  manuelle Kontrolle brauchen.
+- Bindestriche zwischen Wörtern ohne Leerzeichen bleiben absichtlich erhalten,
+  weil sie oft echte Divis-Verbindungen sind.
+- Sprachliche Bis-Beziehungen wie `Mo-Di` werden nicht automatisch korrigiert,
+  weil das Script nicht zuverlässig wissen kann, ob ein Divis oder ein
+  Bis-Strich gemeint ist.
+- Dezimalzeichen werden nur in klaren Währungskontexten korrigiert.
 - Apostrophe in Namen oder englischen Wörtern werden nicht als
   Anführungszeichen behandelt.
-- Die Erkennung ist konservativ: Lieber bleibt ein zweifelhafter Fall
-  unverändert, als dass Code, URLs, IP-Adressen oder Versionsnummern beschädigt
-  werden.
 
 ## iCloud-Shortcuts
 
