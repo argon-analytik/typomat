@@ -58,14 +58,23 @@ wird zu:
 
 - Gerade, deutsche, englische oder gemischte Anführungszeichen werden in die
   Zielvariante umgewandelt.
-- Geviertstriche zwischen Wörtern werden zu Gedankenstrichen mit Leerzeichen:
-  `Text—Text` und `Text — Text` werden zu `Text – Text`.
+- Geviertstriche, doppelte Bindestriche und spaced hyphens zwischen Wörtern
+  werden zu Gedankenstrichen mit Leerzeichen: `Text—Text`, `Text--Text` und
+  `Text - Text` werden zu `Text – Text`.
+- Echte Divis-Verbindungen ohne Leerzeichen bleiben erhalten:
+  `text-text` bleibt `text-text`.
 - Geviertstriche in Tabellen, Zahlenbereichen und Aufzählungen bleiben
   bewusst unverändert.
+- Drei Punkte werden zu einem Auslassungszeichen: `...` wird zu `…`.
+- Überflüssige Leerzeichen vor `,;:!?` werden entfernt.
 - Codeblöcke mit dreifachen Backticks und Inline-Code in Backticks bleiben
   unverändert.
 - Satzzeichen werden nicht aus Anführungszeichen herausgeschoben:
   `"So bleibt es."` wird in der Schweiz zu `«So bleibt es.»`.
+- URLs, E-Mail-Adressen, IPv4-/IPv6-Adressen, Versionsnummern, Datumswerte,
+  Markdown-Links und Dateipfade werden vor der Umwandlung geschützt.
+- IPv4-Adressen werden nicht über feste Präfixe wie `192.` erkannt, sondern als
+  gültige vierteilige Adresse mit Oktetten von `0` bis `255`.
 
 ## Schnellstart im Terminal
 
@@ -81,6 +90,23 @@ Für Deutschland:
 
 ```bash
 pbpaste | perl scripts/german-diplomat.pl | pbcopy
+```
+
+## Testen
+
+Im Ordner `examples/` liegt ein Testtext mit typischen Problemstellen:
+Anführungszeichen-Mischmasch, Gedankenstriche, Divis, IP-Adressen, Versionen,
+Datumswerte, URLs, Markdown, Code und Zahlen.
+
+```bash
+perl scripts/swiss-diplomat.pl < examples/test-text.md
+perl scripts/german-diplomat.pl < examples/test-text.md
+```
+
+Automatisch gegen die erwarteten Ausgaben prüfen:
+
+```bash
+./scripts/test.sh
 ```
 
 ## macOS-Kurzbefehl als Schnellaktion
@@ -145,6 +171,9 @@ Grammatik-Parser.
   absichtlich keine Gedankenstriche korrigiert.
 - Apostrophe in Namen oder englischen Wörtern werden nicht als
   Anführungszeichen behandelt.
+- Die Erkennung ist konservativ: Lieber bleibt ein zweifelhafter Fall
+  unverändert, als dass Code, URLs, IP-Adressen oder Versionsnummern beschädigt
+  werden.
 
 ## iCloud-Shortcuts
 

@@ -6,32 +6,116 @@ use utf8;
 binmode STDIN,  ":encoding(UTF-8)";
 binmode STDOUT, ":encoding(UTF-8)";
 
-sub protect_inline_code {
-    my ($line, $blocks_ref) = @_;
-    my $index = 0;
+my $OPEN_QUOTE = "„";
+my $CLOSE_QUOTE = "“";
 
-    $line =~ s{
-        `([^`]*)`
-    }{
-        push @{$blocks_ref}, $1;
-        my $placeholder = "%%%INLINE_${index}%%%";
-        $index++;
-        $placeholder;
-    }egx;
-
-    return $line;
+sub protect_value {
+    my ($blocks_ref, $value) = @_;
+    my $placeholder = "%%%TYPOPROTECT_" . scalar(@{$blocks_ref}) . "%%%";
+    push @{$blocks_ref}, $value;
+    return $placeholder;
 }
 
-sub restore_inline_code {
-    my ($line, $blocks_ref) = @_;
+sub restore_protected {
+    my ($text, $blocks_ref) = @_;
 
-    for (my $i = 0; $i < @{$blocks_ref}; $i++) {
-        my $placeholder = "%%%INLINE_${i}%%%";
-        my $code = $blocks_ref->[$i];
-        $line =~ s/\Q$placeholder\E/`$code`/g;
+    for (my $i = @{$blocks_ref} - 1; $i >= 0; $i--) {
+        my $placeholder = "%%%TYPOPROTECT_${i}%%%";
+        $text =~ s/\Q$placeholder\E/$blocks_ref->[$i]/g;
     }
 
-    return $line;
+    return $text;
+}
+
+sub is_ipv4_address {
+    my ($ip, $cidr) = @_;
+
+    if (defined $cidr) {
+        $cidr =~ s{^/}{};
+        return 0 if $cidr > 32;
+    }
+
+    foreach my $part (split /\./, $ip) {
+        return 0 if $part =~ /^0\d/;
+        return 0 if $part > 255;
+    }
+
+    return 1;
+}
+
+sub looks_like_plain_thousands {
+    my ($candidate) = @_;
+
+    return 0 if $candidate =~ /^[vV]/;
+    return 0 if $candidate =~ /[-+]/;
+
+    my @parts = split /\./, $candidate;
+    return 0 if @parts < 3;
+    return 0 unless length($parts[0]) >= 1 && length($parts[0]) <= 3;
+
+    for (my $i = 1; $i < @parts; $i++) {
+        return 0 unless length($parts[$i]) == 3;
+    }
+
+    return 1;
+}
+
+sub protect_non_text_contexts {
+    my ($text, $blocks_ref) = @_;
+
+    $text =~ s{(`+)(.*?)\1}{protect_value($blocks_ref, $&)}egx;
+    $text =~ s{!?\[[^\]]*\]\([^)]+\)}{protect_value($blocks_ref, $&)}egx;
+    $text =~ s{(?<![\w@])(?:https?://|www\.)[^\s<>"']+}{protect_value($blocks_ref, $&)}egx;
+    $text =~ s{(?<![\w.+-])[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}(?![\w.-])}{protect_value($blocks_ref, $&)}egx;
+    $text =~ s{(?<![\w:])(?:[A-Fa-f0-9]{0,4}:){2,}[A-Fa-f0-9:.]*(?:/\d{1,3})?(?![\w:])}{protect_value($blocks_ref, $&)}egx;
+
+    $text =~ s{
+        (?<![\d.])
+        ((?:\d{1,3}\.){3}\d{1,3})
+        (/\d{1,2})?
+        (?![\d.])
+    }{
+        my $ip = $1;
+        my $cidr = $2;
+        my $match = $ip . ($cidr // "");
+        is_ipv4_address($ip, $cidr) ? protect_value($blocks_ref, $match) : $match;
+    }egx;
+
+    $text =~ s{\b\d{1,2}\.\d{1,2}\.\d{2,4}\b}{protect_value($blocks_ref, $&)}egx;
+
+    $text =~ s{
+        (?<![\w.])
+        ([vV]?\d+(?:\.\d+){2,}(?:[-+][A-Za-z0-9.]+)?)
+        (?![\w.])
+    }{
+        looks_like_plain_thousands($1) ? $1 : protect_value($blocks_ref, $1);
+    }egx;
+
+    $text =~ s{(?<!\S)(?:~|\.{1,2}|/)[^\s<>"']+}{protect_value($blocks_ref, $&)}egx;
+
+    return $text;
+}
+
+sub previous_non_space {
+    my ($text, $index) = @_;
+
+    for (my $i = $index - 1; $i >= 0; $i--) {
+        my $char = substr($text, $i, 1);
+        return $char if $char !~ /\s/;
+    }
+
+    return undef;
+}
+
+sub next_non_space {
+    my ($text, $index) = @_;
+
+    for (my $i = $index + 1; $i < length($text); $i++) {
+        my $char = substr($text, $i, 1);
+        return $char if $char !~ /\s/;
+    }
+
+    return undef;
 }
 
 sub convert_quotes {
@@ -43,7 +127,23 @@ sub convert_quotes {
         my $char = substr($text, $i, 1);
 
         if ($char eq '"') {
-            if ($open_quote) {
+            my $prev = previous_non_space($text, $i);
+            my $next = next_non_space($text, $i);
+            my $is_open;
+
+            if (!defined $prev) {
+                $is_open = 1;
+            } elsif (!defined $next) {
+                $is_open = 0;
+            } elsif ($prev =~ /[([{<:;,!?—–-]/) {
+                $is_open = 1;
+            } elsif ($next =~ /[.,;:!?…)\]}]/) {
+                $is_open = 0;
+            } else {
+                $is_open = $open_quote;
+            }
+
+            if ($is_open) {
                 $converted .= $open;
                 $open_quote = 0;
             } else {
@@ -58,13 +158,23 @@ sub convert_quotes {
     return $converted;
 }
 
-sub normalize_text_em_dashes {
+sub normalize_text_dashes {
     my ($text) = @_;
 
-    # Keep Markdown and tab-separated table rows unchanged.
+    # Keep Markdown and tab-separated table rows unchanged for dash handling.
     return $text if $text =~ /[|\t]/;
 
     $text =~ s{(\p{L})\s*—\s*(\p{L})}{$1 – $2}g;
+    $text =~ s{(\p{L})\s*--\s*(\p{L})}{$1 – $2}g;
+    $text =~ s{(\p{L})\s*–\s*(\p{L})}{$1 – $2}g;
+    $text =~ s{(\p{L})\s+-\s+(\p{L})}{$1 – $2}g;
+
+    return $text;
+}
+
+sub normalize_ellipsis {
+    my ($text) = @_;
+    $text =~ s/(?<!\.)\.\.\.(?!\.)/…/g;
     return $text;
 }
 
@@ -87,11 +197,18 @@ sub normalize_german_numbers {
 }
 
 sub clean_spacing {
-    my ($text) = @_;
+    my ($text, $open, $close) = @_;
+    my $open_re = quotemeta($open);
+    my $close_re = quotemeta($close);
 
+    $text =~ s/$open_re\s+/$open/g;
+    $text =~ s/\s+$close_re/$close/g;
+    $text =~ s/\s+([,;:!?])/$1/g;
+    $text =~ s/(\p{L})\s+\./$1./g;
+    $text =~ s/([,;:!?])(?=($open_re|\p{L}))/$1 /g;
+    $text =~ s/…(?=\p{L})/… /g;
     $text =~ s/^\s+(\d\.)\s*/$1 /;
     $text =~ s/ {2,}/ /g;
-    $text =~ s/(\d\.)\s+/$1 /g;
 
     return $text;
 }
@@ -103,26 +220,27 @@ my $in_code_block = 0;
 my @output;
 
 foreach my $line (@lines) {
-    if ($line =~ /^\s*```/) {
+    if ($line =~ /^\s*(?:```|~~~)/) {
         $in_code_block = !$in_code_block;
         push @output, $line;
         next;
     }
 
-    if ($in_code_block) {
+    if ($in_code_block || $line =~ /^(?: {4}|\t)/) {
         push @output, $line;
         next;
     }
 
-    my @inline_blocks;
-    my $temp_line = protect_inline_code($line, \@inline_blocks);
+    my @protected_blocks;
+    my $temp_line = protect_non_text_contexts($line, \@protected_blocks);
 
-    $temp_line =~ s/[„“”«»‚‘]/"/g;
-    $temp_line = convert_quotes($temp_line, "„", "“");
-    $temp_line = normalize_text_em_dashes($temp_line);
+    $temp_line =~ s/[„“”‟«»‹›‚‘]/"/g;
+    $temp_line = convert_quotes($temp_line, $OPEN_QUOTE, $CLOSE_QUOTE);
+    $temp_line = normalize_ellipsis($temp_line);
+    $temp_line = normalize_text_dashes($temp_line);
     $temp_line = normalize_german_numbers($temp_line);
-    $temp_line = clean_spacing($temp_line);
-    $temp_line = restore_inline_code($temp_line, \@inline_blocks);
+    $temp_line = clean_spacing($temp_line, $OPEN_QUOTE, $CLOSE_QUOTE);
+    $temp_line = restore_protected($temp_line, \@protected_blocks);
 
     push @output, $temp_line;
 }
