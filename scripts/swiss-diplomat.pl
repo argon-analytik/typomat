@@ -85,6 +85,7 @@ sub protect_non_text_contexts {
     }egx;
 
     $text =~ s{\b\d{1,2}\.\d{1,2}\.\d{2,4}\b}{protect_value($blocks_ref, $&)}egx;
+    $text =~ s{\b\d{4}-\d{2}-\d{2}\b}{protect_value($blocks_ref, $&)}egx;
 
     $text =~ s{
         (?<![\w.])
@@ -177,9 +178,6 @@ sub convert_quotes {
 sub normalize_text_dashes {
     my ($text) = @_;
 
-    # Keep Markdown and tab-separated table rows unchanged for dash handling.
-    return $text if $text =~ /[|\t]/;
-
     $text =~ s{(\p{L})\s*—\s*(\p{L})}{$1 – $2}g;
     $text =~ s{(\p{L})\s*--\s*(\p{L})}{$1 – $2}g;
     $text =~ s{(\p{L})\s*–\s*(\p{L})}{$1 – $2}g;
@@ -191,6 +189,70 @@ sub normalize_text_dashes {
 sub normalize_ellipsis {
     my ($text) = @_;
     $text =~ s/(?<!\.)\.\.\.(?!\.)/…/g;
+    return $text;
+}
+
+sub format_swiss_integer {
+    my ($integer) = @_;
+    my $had_grouping = $integer =~ /[.'’]/;
+
+    $integer =~ s/[.'’]//g;
+
+    if (length($integer) <= 4 && !$had_grouping) {
+        return $integer;
+    }
+
+    $integer =~ s/(?<=\d)(?=(\d{3})+$)/'/g;
+    return $integer;
+}
+
+sub normalize_swiss_prices {
+    my ($text) = @_;
+
+    $text =~ s{
+        (?<![\w.])
+        (\d{1,3}(?:[.'’]\d{3})*|\d+)
+        [.,](?:--|[-–—])
+        (?=$|[\s,.;:!?)\]])
+    }{
+        format_swiss_integer($1) . ".–";
+    }egx;
+
+    $text =~ s{
+        \b((?:CHF|SFr\.?|Fr\.?)\s*)
+        (\d{1,3}(?:[.'’]\d{3})*|\d+)
+        ,(\d{2})
+        (?!\d)
+    }{
+        $1 . format_swiss_integer($2) . "." . $3;
+    }egx;
+
+    $text =~ s{
+        (?<![\w.])
+        (\d{1,3}(?:[.'’]\d{3})*|\d+)
+        ,(\d{2})
+        (\s*(?:CHF|SFr\.?|Fr\.?))
+        (?!\w)
+    }{
+        format_swiss_integer($1) . "." . $2 . $3;
+    }egx;
+
+    return $text;
+}
+
+sub normalize_numeric_ranges {
+    my ($text) = @_;
+
+    $text =~ s{
+        (?<![\w.+-])
+        (\d+(?:[.,]\d+)?)
+        \s*-\s*
+        (\d+(?:[.,]\d+)?)
+        (?![\w.+-])
+    }{
+        $1 . "–" . $2;
+    }egx;
+
     return $text;
 }
 
@@ -275,6 +337,8 @@ foreach my $line (@lines) {
     $temp_line =~ s/[„“”‟«»‹›‚‘]/"/g;
     $temp_line = convert_quotes($temp_line, $OPEN_QUOTE, $CLOSE_QUOTE, $INNER_OPEN_QUOTE, $INNER_CLOSE_QUOTE);
     $temp_line = normalize_ellipsis($temp_line);
+    $temp_line = normalize_swiss_prices($temp_line);
+    $temp_line = normalize_numeric_ranges($temp_line);
     $temp_line = normalize_text_dashes($temp_line);
     $temp_line = normalize_swiss_numbers($temp_line);
     $temp_line = clean_spacing($temp_line, $OPEN_QUOTE, $CLOSE_QUOTE);

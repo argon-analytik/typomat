@@ -71,8 +71,14 @@ wird zu:
   `Text - Text` werden zu `Text – Text`.
 - Echte Divis-Verbindungen ohne Leerzeichen bleiben erhalten:
   `text-text` bleibt `text-text`.
-- Geviertstriche in Tabellen, Zahlenbereichen und Aufzählungen bleiben
-  bewusst unverändert.
+- Tabellenzellen werden mitkorrigiert: `| Text—Text |` wird zu
+  `| Text – Text |`.
+- Zahlenbereiche werden als Bis-Strich gesetzt: `1-2` und `10 - 12` werden zu
+  `1–2` und `10–12`.
+- Preis-Abkürzungen werden lokalisiert: Schweiz `29.--` zu `29.–`, Deutschland
+  `29.--` zu `29,–`.
+- Dezimalzeichen bei Preisen werden nur in klaren Währungskontexten korrigiert:
+  Schweiz `CHF 29,95` zu `CHF 29.95`, Deutschland `29.95 €` zu `29,95 €`.
 - Drei Punkte werden zu einem Auslassungszeichen: `...` wird zu `…`.
 - Überflüssige Leerzeichen vor `,;:!?` werden entfernt.
 - Codeblöcke mit dreifachen Backticks und Inline-Code in Backticks bleiben

@@ -8,11 +8,15 @@ Text – Text sollte ein Gedankenstrich werden. Text – Text auch. Text – Tex
 
 Bitte keine Technik kaputtmachen: 192.168.1.1, 10.0.0.1, 8.8.8.8, 172.16.254.1/24 und 255.255.255.255 bleiben gleich.
 
-Auch Versionen und Daten bleiben gleich: v1.2.3, macOS 15.4.1, 08.06.2026 und Kapitel 1.2.3.
+Auch Versionen und Daten bleiben gleich: v1.2.3, macOS 15.4.1, 08.06.2026, 2026-06-08 und Kapitel 1.2.3.
 
 Grosse Zahlen: 9.000, 100.000, 1.000.000 und 1.000.000.000.
 
 Schweizer Zahlen im deutschen Test: 100.000 und 1.000.000.
+
+Zahlenbereiche: 1–2, 10–12 und 1,5–2,0.
+
+Preise: CHF 29,95, Fr. 1.234,50, 29,– und 29,–. In Deutschland: 29,95 € und EUR 1.234,50.
 
 Leerzeichen vor Satzzeichen sollen weg: wirklich? Ja! Und Kommas, bitte auch.
 
@@ -28,4 +32,5 @@ Inline-Code bleibt unverändert: `const text = "Text—Text"; const ip = "192.16
 
 | Spalte | Wert |
 | --- | --- |
-| Text—Text | 100.000 |
+| Text – Text | 100.000 |
+| 1–2 | 29,– |
