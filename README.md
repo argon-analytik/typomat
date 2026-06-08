@@ -32,6 +32,7 @@ Warum das Projekt existiert: [Typografie ist die Rhetorik der Schrift](docs/essa
 - [Beispiele](#beispiele)
 - [Was Typomat korrigiert](#was-typomat-korrigiert)
 - [Was Typomat schützt](#was-typomat-schützt)
+- [Direkt installieren](#direkt-installieren)
 - [Schnellstart im Terminal](#schnellstart-im-terminal)
 - [macOS-Kurzbefehl als Schnellaktion](#macos-kurzbefehl-als-schnellaktion)
 - [Tests](#tests)
@@ -147,6 +148,20 @@ Geschützt werden unter anderem:
 IPv4-Adressen werden nicht über feste Präfixe wie `192.` erkannt, sondern als
 gültige vierteilige Adresse mit Oktetten von `0` bis `255`. Dadurch bleiben
 auch `10.0.0.1`, `8.8.8.8` oder `172.16.254.1/24` geschützt.
+
+## Direkt installieren
+
+Die fertigen macOS-Kurzbefehle können direkt über iCloud hinzugefügt werden:
+
+| Kurzbefehl | Link |
+| --- | --- |
+| Swiss Typomat | [Kurzbefehl hinzufügen](https://www.icloud.com/shortcuts/0cb78b98b8734bdda6595df4d7b7f326) |
+| German Typomat `„…“` | [Kurzbefehl hinzufügen](https://www.icloud.com/shortcuts/86c17cb2263c46ad805a5d9448f1d341) |
+| German Typomat `»…«` | [Kurzbefehl hinzufügen](https://www.icloud.com/shortcuts/0c8d49d9a3b44df9ad58645878e86d40) |
+
+Nach dem Hinzufügen müssen in macOS eventuell noch Script- und
+Datenschutzberechtigungen erlaubt werden. Die manuelle Einrichtung ist unten
+und in [`docs/macos-kurzbefehl.md`](docs/macos-kurzbefehl.md) dokumentiert.
 
 ## Schnellstart im Terminal
 
@@ -282,8 +297,8 @@ Typomat ist ein pragmatischer Textfilter, kein vollständiger Grammatik-Parser.
 
 ## iCloud-Shortcuts
 
-Die iCloud-Links zu den fertigen Kurzbefehlen werden hier ergänzt:
+Direkte iCloud-Links zu den fertigen macOS-Kurzbefehlen:
 
-- Swiss-Diplomat: folgt
-- German-Diplomat: folgt
-- German-Diplomat mit Guillemets: folgt
+- Swiss Typomat: <https://www.icloud.com/shortcuts/0cb78b98b8734bdda6595df4d7b7f326>
+- German Typomat `„…“`: <https://www.icloud.com/shortcuts/86c17cb2263c46ad805a5d9448f1d341>
+- German Typomat `»…«`: <https://www.icloud.com/shortcuts/0c8d49d9a3b44df9ad58645878e86d40>

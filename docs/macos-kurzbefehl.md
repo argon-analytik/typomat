@@ -6,6 +6,19 @@ als Schnellaktion einrichtest.
 Typomat funktioniert als Kurzbefehl nur unter macOS. Auf iPhone und iPad fehlt
 die hier verwendete macOS-Aktion **Shell-Skript ausführen** mit Perl.
 
+## Fertige Kurzbefehle installieren
+
+Du kannst die fertigen Kurzbefehle direkt über iCloud hinzufügen:
+
+| Kurzbefehl | Link |
+| --- | --- |
+| Swiss Typomat | [Kurzbefehl hinzufügen](https://www.icloud.com/shortcuts/0cb78b98b8734bdda6595df4d7b7f326) |
+| German Typomat `„…“` | [Kurzbefehl hinzufügen](https://www.icloud.com/shortcuts/86c17cb2263c46ad805a5d9448f1d341) |
+| German Typomat `»…«` | [Kurzbefehl hinzufügen](https://www.icloud.com/shortcuts/0c8d49d9a3b44df9ad58645878e86d40) |
+
+Wenn du den Kurzbefehl selbst nachbauen oder kontrollieren möchtest, folge den
+Schritten unten.
+
 ## 1. Script-Ausführung erlauben
 
 Öffne in der Kurzbefehle-App die Einstellungen, wechsle zu **Fortgeschritten**
